@@ -16,13 +16,12 @@ class MainWindow():
                 print("MainWindow init")
                 self.depthCamera = cameraSystem.connect(devices[0])
                 rate = Voxel.FrameRate()
-                rate.numerator = 10
+                rate.numerator = 5
                 rate.denominator = 1
                 self.depthCamera.setFrameRate(rate)
                 if self.depthCamera:
                         self.depthCamera.clearAllCallbacks()
                         self.depthCamera.registerCallback(Voxel.DepthCamera.FRAME_DEPTH_FRAME, self.callbackInternal)
-                        #self.depthCamera.registerCallback(Voxel.DepthCamera.FRAME_XYZI_POINT_CLOUD_FRAME, self.callbackInternal)
                         if not self.depthCamera.start():
                                 print(" start fail")
                         else:
@@ -54,7 +53,6 @@ class MainWindow():
                 height_px = data_frame.size.height
                 amp_frame = np.ndarray([height_px, width_px], dtype=np.uint8)
                 depth_frame = np.ndarray([height_px, width_px], dtype=float)
-                #print('ranges: ', range(width_px), range(height_px))
                 for x in range(width_px):
                         for y in range(height_px):
                                 #print('reading px ', y * (width_px) + x, x, y)
@@ -70,18 +68,20 @@ class MainWindow():
                 
 
 
-cameraSystem = Voxel.CameraSystem()
+try:
+        init_cv2()
+        cameraSystem = Voxel.CameraSystem()
 
-devices = cameraSystem.scan()
-# depthCamera = None
+        devices = cameraSystem.scan()
+        # depthCamera = None
 
-if len(devices) == 1:
-         print(" find one devices")      
-         window = MainWindow(cameraSystem)
-         key = raw_input("Input enter key to quit ")
-         print(" quit now")
-else:
-   print(" no device found")
+        if len(devices) == 1:
+                 print(" find one devices")      
+                 window = MainWindow(cameraSystem)
+                 key = raw_input("Input enter key to quit ")
+                 print(" quit now")
+        else:
+           print(" no device found")
 
-
-del cameraSystem
+finally:
+        del cameraSystem
