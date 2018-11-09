@@ -1,0 +1,1 @@
+/home/smorad/DepthEyeSdk/tools/simpleViewer/setup.bash
